@@ -2,11 +2,12 @@ package handler
 
 import (
     "encoding/json"
+    "errors" 
     "log"
     "net/http"
     "strconv"
 
-	"moviehub/auth"
+    "moviehub/auth"
     "moviehub/store"
 )
 
