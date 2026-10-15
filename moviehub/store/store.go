@@ -1,13 +1,43 @@
 package store
 
 import (
-    "errors"
+	"context"
+	"errors"
 
-    "github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var ErrNotFound = errors.New("not found")
 
 type Store struct {
-    Pool *pgxpool.Pool
+	Pool *pgxpool.Pool
+}
+
+// MovieDetail คือโครงสร้างข้อมูลสำหรับแสดงรายละเอียดหนัง
+type MovieDetail struct {
+	Movie
+	Detail *string `json:"detail"`
+}
+
+// GetMovie ทำหน้าที่ดึงข้อมูลหนัง 1 เรื่องจากฐานข้อมูล
+func (s Store) GetMovie(ctx context.Context, id int64) (MovieDetail, error) {
+	var m MovieDetail
+	err := s.Pool.QueryRow(ctx,
+		`SELECT m.id, m.title, m.title_th,
+		(SELECT coalesce(g.name_th, g.name_en) FROM movie_genres mg
+		JOIN genres g ON g.id = mg.genre_id
+		WHERE mg.movie_id = m.id AND mg.position = 0),
+		extract(year FROM m.release_date)::int,
+		round(m.vote_average, 1)::float8,
+		'https://image.tmdb.org/t/p/w500' || m.poster_path,
+		coalesce(m.overview_th, m.overview)
+		FROM movies m
+		WHERE m.id = $1`, id).
+		Scan(&m.ID, &m.Title, &m.TitleTh, &m.Genre, &m.Year, &m.Rating, &m.Poster, &m.Detail)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return m, ErrNotFound
+	}
+	return m, err
 }
