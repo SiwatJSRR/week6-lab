@@ -1,11 +1,10 @@
 package store
 
 import (
-    "context"
-	"errors"
+    "errors"
     "sync"
-
-	"github.com/jackc/pgx/v5"
+    "context"
+    "github.com/jackc/pgx/v5"
     "github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -14,7 +13,7 @@ type Menu struct {
     Name  string  `json:"name"`
     Price float64 `json:"price"`
     Type  string  `json:"type"`
-	Stock int     `json:"stock"`
+    Stock int     `json:"stock"`
 }
 
 var ErrNotFound = errors.New("menu not found")
@@ -25,7 +24,6 @@ var ErrNotFound = errors.New("menu not found")
     Add(m Menu) Menu
     Delete(id int) error
 }*/
-
 type MenuStore interface {
     List(ctx context.Context, menuType string) ([]Menu, error)
     Get(ctx context.Context, id int) (Menu, error)

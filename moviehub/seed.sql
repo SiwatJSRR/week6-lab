@@ -1,4 +1,4 @@
-cd-- สร้างโดย docs/db/make-seed.mjs เมื่อ 2026-09-30T00:49:49.439Z
+-- สร้างโดย docs/db/make-seed.mjs เมื่อ 2026-09-30T00:49:49.439Z
 -- region TH: now_playing 48 เรื่อง + popular 52 เรื่อง = 100 เรื่อง
 -- This product uses the TMDB API but is not endorsed or certified by TMDB.
 
